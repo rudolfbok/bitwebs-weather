@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchWeather } from '../lib/weatherService';
-import { getCities, saveCity, deleteCity, updateCity } from '../lib/crudService';
+import { fetchWeather } from '../lib/weatherService'; // Ensure you have this service implemented
+import { getCities, saveCity, deleteCity } from '../lib/crudService'; // Ensure you have this CRUD service implemented
 
 interface WeatherData {
   name: string;
@@ -27,9 +27,10 @@ export default function Home() {
   }, []);
 
   // Fetch weather data for a city
-  const getWeather = async () => {
+  const getWeather = async (cityToFetch: string) => {
+    // Ensure getWeather accepts a parameter
     try {
-      const data = await fetchWeather(city);
+      const data = await fetchWeather(cityToFetch);
       setWeather(data);
       setError('');
     } catch (err) {
@@ -66,7 +67,7 @@ export default function Home() {
 
       <button
         className="bg-green-500 p-2 rounded mb-4"
-        onClick={getWeather}
+        onClick={() => getWeather(city)} // Calls getWeather with the current input city
       >
         Get Weather
       </button>
@@ -94,8 +95,16 @@ export default function Home() {
         {favoriteCities.length > 0 ? (
           <ul className="mt-4">
             {favoriteCities.map((favCity, index) => (
-              <li key={index} className="flex justify-between items-center mb-2">
-                <span>{favCity}</span>
+              <li
+                key={index}
+                className="flex justify-between items-center mb-2"
+              >
+                <button
+                  className="text-blue-200 underline"
+                  onClick={() => getWeather(favCity)} // Calls getWeather with the clicked city name
+                >
+                  {favCity}
+                </button>
                 <button
                   className="bg-red-500 p-2 rounded ml-4"
                   onClick={() => removeCity(favCity)}
